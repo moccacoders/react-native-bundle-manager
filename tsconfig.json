@@ -1,0 +1,15 @@
+{
+	"include": ["**/*.ts"],
+	"compilerOptions": {
+		"module": "CommonJS",
+		"esModuleInterop": true,
+		"target": "es6",
+		"moduleResolution": "node",
+		"sourceMap": true,
+		"outDir": "dist",
+		"jsx": "preserve",
+		"lib": ["es2017", "ES2021.String"],
+		"strict": true,
+		"typeRoots": ["./node_modules/@types", "./src/@types"]
+	}
+}

@@ -1,0 +1,37 @@
+{
+	"name": "react-native-bundle-manager",
+	"version": "1.0.0",
+	"main": "dist/index.js",
+	"repository": "https://github.com/moccacoders/react-native-bundle-manager",
+	"author": "Raymundo Salazar <raymundo.salser@hotmail.com>",
+	"license": "MIT",
+	"bin": {
+		"react-native-bundle-manager": "./dist/index.js"
+	},
+	"devDependencies": {
+		"@inquirer/prompts": "3.3.0",
+		"@types/cli-spinner": "0.2.3",
+		"@types/figlet": "1.5.8",
+		"@types/lodash.chunk": "4.2.9",
+		"@types/node": "20.10.1",
+		"@types/yargs": "17.0.32",
+		"chalk": "4.1.2",
+		"cli-spinner": "0.2.10",
+		"commander": "11.1.0",
+		"figlet": "1.7.0",
+		"lodash.chunk": "4.2.0",
+		"tsc-alias": "1.8.8",
+		"tsconfig-paths": "4.2.0",
+		"typescript": "5.3.2",
+		"yargs": "17.7.2"
+	},
+	"scripts": {
+		"build": "yarn build:typescript && yarn build:permissions",
+		"build:copyfiles": "copyfiles -u 1 ./assets/**/*.txt ./dist/assets",
+		"build:typescript": "tsc",
+		"build:permissions": "chmod +x ./dist/index.js",
+		"develop": "yarn build && yarn watch:typescript",
+		"watch:typescript": "tsc -w",
+		"react-native-bundle-manager": "dist/index.js"
+	}
+}
