@@ -50,7 +50,7 @@ const wantToUpdateBundleNumbers = async () => {
 		{
 			promptOptions: {
 				type: "select",
-				message: "¿Qué quieres hacer?",
+				message: "Quieres actualizar los bundle numbers de iOS o Android?",
 				choices: [
 					{ name: "Actualizar ambos", value: "both" },
 					{ name: "Actualizar Android", value: "android" },
@@ -61,7 +61,7 @@ const wantToUpdateBundleNumbers = async () => {
 	)
 }
 
-const findiOSFolder = async (platform: boolean, revert?: boolean) => {
+const findiOSFolder = async (platform: string, revert?: boolean) => {
 	spin.start()
 
 	// GET ALL FOLDERS FROM IOS FOLDER IN ROOT PROJECT
@@ -77,7 +77,7 @@ const findiOSFolder = async (platform: boolean, revert?: boolean) => {
 	}
 }
 
-const findBundleNumbers = async (platform: string | boolean, revert?: boolean) => {
+const findBundleNumbers = async (platform: string, revert?: boolean) => {
 	// GET BUNDLE NUMBERS FROM ANDROID
 	const android = await fs.readFile(paths.android, "utf-8")
 	const androidBundleNumber = android.match(/versionCode\s(\d+)/)?.[1]
@@ -89,7 +89,7 @@ const findBundleNumbers = async (platform: string | boolean, revert?: boolean) =
 	bundleNumbers.actual.android = Number(androidBundleNumber)
 	bundleNumbers.actual.ios = Number(iosBundleNumber)
 
-	if (revert) getLastBundleNumbers()
+	if (revert) return getLastBundleNumbers(platform)
 
 	let message = ""
 	if (platform === "both")
@@ -106,7 +106,7 @@ const findBundleNumbers = async (platform: string | boolean, revert?: boolean) =
 
 const autoUpdateBundleNumbers = async (response: boolean, platform: string) => {
 	if (response === false) {
-		if (platform === "both" || platform === "android") return giveMeAndroidBundleNumber(platform)
+		if (["both", "android"].includes(platform)) return giveMeAndroidBundleNumber(platform)
 		else if (platform === "ios") return giveMeiOSBundleNumber(platform)
 	}
 
@@ -177,13 +177,15 @@ const validateBundleNumbers = async (platform: string) => {
 
 const updateBundleNumbers = async (response: boolean, platform: string, revert?: boolean) => {
 	if (response === false) {
-		if (platform === "both" || platform === "android") return giveMeAndroidBundleNumber(platform)
+		if (["both", "android"].includes(platform)) return giveMeAndroidBundleNumber(platform)
 		else if (platform === "ios") return giveMeiOSBundleNumber(platform)
 	}
 	question(`Un momento por favor. Estoy actualizando los bundle numbers de tu proyecto.`, false)
+	spin.setSpinnerTitle(revert ? "Revirtiendo..." : "Actualizando...")
+	spin.start()
 
 	// UPDATE ANDROID BUNDLE NUMBER
-	if (platform === "both" || platform === "android") {
+	if (["both", "android"].includes(platform)) {
 		const android = await fs.readFile(paths.android, "utf-8")
 		const androidBundleNumber = android.replaceAll(
 			/versionCode\s(\d+)/g,
@@ -202,9 +204,6 @@ const updateBundleNumbers = async (response: boolean, platform: string, revert?:
 		await fs.writeFile(paths.ios, iosBundleNumber)
 	}
 
-	spin.setSpinnerTitle("Actualizando...")
-	spin.start()
-
 	setTimeout(() => {
 		spin.stop(true)
 		if (revert) saveLogRevert(platform)
@@ -218,15 +217,16 @@ const saveLog = async (platform: string) => {
 	// SAVE LOG
 	const log = await fs.readFile(`${process.cwd()}/react-rover.log`, "utf-8").catch(() => "")
 
-	let platformLog = ""
-	if (platform === "both")
-		platformLog = `Android: ${bundleNumbers.news.android} - iOS: ${bundleNumbers.news.ios}`
-	if (platform === "android") platformLog = `Android: ${bundleNumbers.news.android}`
-	if (platform === "ios") platformLog = `iOS: ${bundleNumbers.news.ios}`
+	let newLog = log
+	if (["both", "android"].includes(platform))
+		newLog += `${new Date().toLocaleString()} - [UPDATE - BUNDLE NUMBERS - ANDROID] Bundle numbers updated: Android: ${
+			bundleNumbers.actual.android
+		} → ${bundleNumbers.news.android}\n`
+	if (["both", "ios"].includes(platform))
+		newLog += `${new Date().toLocaleString()} - [UPDATE - BUNDLE NUMBERS - IOS] Bundle numbers updated: iOS: ${
+			bundleNumbers.actual.ios
+		} → ${bundleNumbers.news.ios}\n`
 
-	const newLog =
-		log +
-		`${new Date().toLocaleString()} - [UPDATE - BUNDLE NUMBERS] Bundle numbers updated: ${platformLog}\n`
 	await fs.writeFile(`${process.cwd()}/react-rover.log`, newLog)
 
 	spin.setSpinnerTitle("Guardando registros...")
@@ -241,13 +241,52 @@ const saveLog = async (platform: string) => {
 const saveLogRevert = async (platform: string) => {
 	question(`Un momento por favor. Estoy actualizando los bundle numbers de tu proyecto.`, false)
 
-	// SAVE LOG
+	// SAVE REVERT LOG AND CHANGE UPDATE BUNDLE NUMBERS TO ADD A REVERTED FLAG
 	const log = await fs.readFile(`${process.cwd()}/react-rover.log`, "utf-8").catch(() => "")
-	const newLog =
-		log +
-		`${new Date().toLocaleString()} - [REVERT - BUNDLE NUMBERS] Bundle numbers reverted: Android: ${
-			bundleNumbers.news.android
-		} - iOS: ${bundleNumbers.news.ios}\n`
+
+	let newLog = log
+	if (["both", "android"].includes(platform))
+		newLog += `${new Date().toLocaleString()} - [REVERT - BUNDLE NUMBERS - ANDROID] Bundle numbers reverted: Android: ${
+			bundleNumbers.actual.android
+		} → ${bundleNumbers.news.android}\n`
+	if (["both", "ios"].includes(platform))
+		newLog += `${new Date().toLocaleString()} - [REVERT - BUNDLE NUMBERS - IOS] Bundle numbers reverted: iOS: ${
+			bundleNumbers.actual.ios
+		} → ${bundleNumbers.news.ios}\n`
+
+	let androidReverted = !["both", "android"].includes(platform)
+	let iosReverted = !["both", "ios"].includes(platform)
+
+	newLog = newLog
+		.split("\n")
+		.reverse()
+		.map(log => {
+			// MODIFY THIS LOG IF IS PLATFORM AND IS NOT REVERTED. VALIDATE THAT THIS HAS NOT (REVERTED) FLAG AT THE END OF THE LINE
+			if (
+				["both", "android"].includes(platform) &&
+				log.search("ANDROID") >= 0 &&
+				log.match(/ANDROID\]\sBundle numbers\supdated:\sAndroid:\s(\d+)\s=>\s(\d+)$/g) !== null &&
+				!androidReverted
+			) {
+				androidReverted = true
+				return (log += " (REVERTED)")
+			}
+
+			if (
+				["both", "ios"].includes(platform) &&
+				log.search("IOS") >= 0 &&
+				log.match(/IOS\]\sBundle numbers\supdated:\siOS:\s(\d+)\s=>\s(\d+)$/g) !== null &&
+				!iosReverted
+			) {
+				iosReverted = true
+				return (log += " (REVERTED)")
+			}
+
+			return log
+		})
+		.reverse()
+		.join("\n")
+
 	await fs.writeFile(`${process.cwd()}/react-rover.log`, newLog)
 
 	spin.setSpinnerTitle("Guardando registros...")
@@ -255,7 +294,7 @@ const saveLogRevert = async (platform: string) => {
 
 	setTimeout(() => {
 		spin.stop(true)
-		updatedBundleNumbers(false, platform)
+		updatedBundleNumbers(true, platform)
 	}, 1000)
 }
 
@@ -277,28 +316,50 @@ const updatedBundleNumbers = async (response: boolean, platform: string) => {
 
 const wantToRevertBundleNumbers = async () => {
 	question(
-		"Con gusto te apoyo a revertir tus bundle numbers. Lo primero que tengo que hacer es validar la carpeta de tu proyecto de iOS. Me das permiso de continuar?",
-		response => findiOSFolder(response)
+		"Con gusto te apoyo a revertir tus bundle numbers. Quieres revertir los bundle numbers de iOS o Android?",
+		platform => findiOSFolder(platform, true),
+		{
+			promptOptions: {
+				type: "select",
+				message: "Quieres revertir los bundle numbers de iOS o Android?",
+				choices: [
+					{ name: "Revertir ambos", value: "both" },
+					{ name: "Revertir Android", value: "android" },
+					{ name: "Revertir iOS", value: "ios" },
+				],
+			},
+		}
 	)
 }
 
-const getLastBundleNumbers = async () => {
-	// GET LAST BUNDLE NUMBERS FROM LOG
+const getLastBundleNumbers = async (platform: string) => {
+	// GET LAST BUNDLE NUMBERS FROM LOG BY PLATFORM OR BOTH PLATFORMS AND UPDATE
 	const log = await fs.readFile(`${process.cwd()}/react-rover.log`, "utf-8").catch(() => "")
-	const lastLog = log
-		.split("\n")
-		.filter(log => log.includes("[UPDATE - BUNDLE NUMBERS]"))
-		.reverse()[0]
-	const lastBundleNumbers = lastLog?.match(/Android:\s(\d+)\s-\siOS:\s(\d+)/)?.slice(1)
+	const android = log.match(/ANDROID\]\sBundle numbers\supdated:\sAndroid:\s(\d+)\s=>\s(\d+)\n/g)
+	const ios = log.match(/IOS\]\sBundle numbers\supdated:\siOS:\s(\d+)\s=>\s(\d+)\n/g)
 
-	if (lastBundleNumbers) {
-		bundleNumbers.news.android = Number(lastBundleNumbers[0])
-		bundleNumbers.news.ios = Number(lastBundleNumbers[1])
+	let androidBundleNumber = 0
+	let iosBundleNumber = 0
+
+	if (["both", "android"].includes(platform)) {
+		androidBundleNumber = Number(android?.[android.length - 1].match(/(\d+)\s=>/)?.[1])
+		bundleNumbers.news.android = androidBundleNumber
 	}
 
+	if (["both", "ios"].includes(platform)) {
+		iosBundleNumber = Number(ios?.[ios.length - 1].match(/(\d+)\s=>/)?.[1])
+		bundleNumbers.news.ios = iosBundleNumber
+	}
+
+	let message = ``
+	if (platform === "both")
+		message = `Android: ${bundleNumbers.news.android} - iOS: ${bundleNumbers.news.ios}`
+	if (platform === "android") message = `Android: ${bundleNumbers.news.android}`
+	if (platform === "ios") message = `iOS: ${bundleNumbers.news.ios}`
+
 	question(
-		`Listo! He encontrado los bundles numbers anteriores de tu proyecto. Android: ${bundleNumbers.news.android} - iOS: ${bundleNumbers.news.ios}. ¿Estas de acuerdo con revertir los cambios?`,
-		response => updateBundleNumbers(response, "", true),
+		`Listo! He encontrado los bundles numbers anteriores de tu proyecto. ${message}. ¿Estas de acuerdo con revertir los cambios?`,
+		response => updateBundleNumbers(response, platform, true),
 		{ nextMessage: "¿Estas de acuerdo con revertir los cambios?", skipClose: true }
 	)
 }

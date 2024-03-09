@@ -11,12 +11,12 @@ const interactive = () => {
 	select({
 		message: lang.whatToDo.title,
 		choices: [
-			{ name: lang.whatToDo.aboutMe, value: "aboutMe" },
 			{ name: lang.whatToDo.bundleNumbers, value: "bundleNumbers" },
 			{ name: lang.whatToDo.versionName, value: "versionName" },
 			{ name: lang.whatToDo.applicationId, value: "applicationId" },
 			{ name: lang.whatToDo.releases, value: "releases" },
 			{ name: lang.whatToDo.recordChanges, value: "recordChanges" },
+			{ name: lang.whatToDo.aboutMe, value: "aboutMe" },
 			{ name: lang.whatToDo.exit, value: "exit" },
 		],
 	})

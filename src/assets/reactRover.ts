@@ -3,22 +3,6 @@ import chunk from "lodash.chunk"
 import lang from "../locales"
 import { TLocales } from "../locales/interfaces"
 
-export const ReactRover: string = `
-              %%%%%%%%%%%%             
-    %%%%   %%%%%%%%%%%%%%%%%%%    %%%% 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%˚˚˚%%%%%%%%%%˚˚˚%%%%%%%%
-    %%%%%%%%%._.%%%%%%%%%%._.%%%%%%%%
-     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
-      %%%%%%%%%%%%%%%%%%%%%%%%%%%%%    
-           --================--  
-   
-       %%%%                    %%%%
-      %%%%%%                  %%%%%%
-       %%%%                    %%%%
-`
-
 export const ReactRoverAscii: string = `
               ▒▒▒▓▓▓▓▓▒▒▒               
           ▒▓███████████████▓▓▒          
@@ -63,23 +47,21 @@ export const dialogBubble = (text: string, max: number = 60): string => {
 |${" ".repeat(longest + 6)}|
 |   ${text}   |
 |${" ".repeat(longest + 6)}|
- ${"˚".repeat(longest + 6)} 
-       O
-          o
-             o`
+ ${"˚".repeat(longest + 6)}
+ `
 }
 
 export const sayHello = () => {
-	process.stdout.write(dialogBubble(global.lang.react_rover.hello))
 	process.stdout.write(chalk.hex("#0de2ea")(ReactRoverAscii))
+	process.stdout.write(dialogBubble(global.lang.react_rover.hello))
 }
 
 export const sayBye = () => {
-	process.stdout.write(dialogBubble(global.lang.react_rover.bye))
 	process.stdout.write(chalk.hex("#0de2ea")(ReactRoverAscii))
+	process.stdout.write(dialogBubble(global.lang.react_rover.bye))
 }
 
 export const reactRoverMessage = (message: string) => {
-	process.stdout.write(dialogBubble(message))
 	process.stdout.write(chalk.hex("#0de2ea")(ReactRoverAscii))
+	process.stdout.write(dialogBubble(message))
 }
