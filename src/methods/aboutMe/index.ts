@@ -1,6 +1,9 @@
 import { question } from "../../../src/utils"
 import mainInteractive from "../interactive"
 
+export const shortDescription = global.lang.generals.short_description
+export const description = global.lang.generals.description
+
 export const interactive = () => {
 	question(global.lang.about_me.who_am_i, whatCanIDo)
 }

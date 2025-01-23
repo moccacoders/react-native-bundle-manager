@@ -6,7 +6,7 @@
 	"author": "Raymundo Salazar <raymundo.salser@hotmail.com>",
 	"license": "MIT",
 	"bin": {
-		"react-native-bundle-manager": "./dist/index.js"
+		"rn-rover": "./dist/index.js"
 	},
 	"devDependencies": {
 		"@inquirer/prompts": "3.3.0",

@@ -36,6 +36,8 @@ export interface ILang {
 
 export interface IGenerals {
 	continue_question: string
+	description: string
+	short_description: string
 }
 
 export interface IReactRover {

@@ -10,6 +10,7 @@
 		"jsx": "preserve",
 		"lib": ["es2017", "ES2021.String"],
 		"strict": true,
-		"typeRoots": ["./node_modules/@types", "./src/@types"]
+		"typeRoots": ["./node_modules/@types", "./src/@types"],
+		"resolveJsonModule": true
 	}
 }

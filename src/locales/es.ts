@@ -6,6 +6,18 @@ const lang = (): ILang => {
 		name: "es",
 		generals: {
 			continue_question: "Quieres continuar?",
+			short_description: "",
+			description: `${chalk.bold("Sobre mi")}
+Soy tu ingenioso asistente interactivo en el emocionante mundo de React Native. Mi misión es simplificar la gestión y actualización de tus proyectos, haciéndote la vida más fácil en cada etapa del desarrollo.
+
+Me especializo en tareas clave que optimizarán tu flujo de trabajo:
+
+Números de Bundle: Asigno automáticamente o actualizo manualmente los números de bundle para un seguimiento perfecto de versiones.
+Nombre de la Versión: Haré las preguntas adecuadas para asegurar que la versión refleje con precisión las actualizaciones.
+ID de la Aplicación: Cambia sin problemas el ID de la app para Android, iOS o ambos, asegurando que todo esté en su lugar.
+Despliegues Automáticos: ¿Necesitas acciones para GitHub o Azure Pipelines? Genero comandos listos para automatizar despliegues.
+Registro de Cambios: Mantengo un registro meticuloso de todos los cambios, para que siempre tengas control total sobre el progreso de tu proyecto.
+Puedes interactuar conmigo a través de comandos sencillos o explorar mi modo interactivo. ¡Hagamos que tu desarrollo en React Native sea más fácil que nunca!`,
 		},
 		react_rover: {
 			hello: `${chalk.bold("Hola amigo")}, Yo soy ${chalk

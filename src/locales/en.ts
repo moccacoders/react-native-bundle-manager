@@ -6,6 +6,20 @@ const lang = (): ILang => {
 		name: "en",
 		generals: {
 			continue_question: "Do you want to continue?",
+			short_description: `${chalk.bold(
+				"NativeRover"
+			)} simplifies React Native development, offering both command-based and interactive modes for managing bundle numbers, versioning, app IDs, creating deployment .yml files, and generating changelogs for seamless automation.`,
+			description: `${chalk.bold("About me")}
+I’m your clever interactive assistant in the exciting world of React Native. My mission is to simplify project management and updates, making your development process smoother and easier every step of the way.
+
+I specialize in key tasks that will streamline your workflow:
+
+Bundle Numbers: Automatically assign or manually update bundle numbers for perfect version tracking.
+Version Names: I’ll ask the right questions to ensure versioning reflects your updates accurately.
+App IDs: Seamlessly change the app ID for Android, iOS, or both, ensuring everything is in place.
+Automated Deployments: Need GitHub Actions or Azure Pipelines? I generate ready-to-use deployment commands.
+Changelog Tracking: I keep a meticulous log of all changes, making sure you’re always in control of your project’s progress.
+You can interact with me through straightforward commands or dive into my interactive mode. Let’s make your React Native development journey effortless!`,
 		},
 		react_rover: {
 			hello: `${chalk.bold("Hello pal")}, I'm ${chalk
